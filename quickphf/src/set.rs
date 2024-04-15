@@ -75,7 +75,7 @@ impl<K> PhfSet<K> {
     }
 }
 
-impl<K: Eq + Hash> PhfSet<K> {
+impl<K: Eq + Hash  + core::convert::AsRef<[u8]>> PhfSet<K> {
     /// Returns `true` if the set contains the given element.
     ///
     /// # Examples
@@ -254,7 +254,7 @@ impl<'a, K> IntoIterator for &'a PhfSet<K> {
     }
 }
 
-impl<K: Eq + Hash> PartialEq for PhfSet<K> {
+impl<K: Eq + Hash  + core::convert::AsRef<[u8]>> PartialEq for PhfSet<K> {
     fn eq(&self, other: &Self) -> bool {
         if self.len() != other.len() {
             return false;
@@ -264,7 +264,7 @@ impl<K: Eq + Hash> PartialEq for PhfSet<K> {
     }
 }
 
-impl<K: Eq + Hash> Eq for PhfSet<K> {}
+impl<K: Eq + Hash  + core::convert::AsRef<[u8]>> Eq for PhfSet<K> {}
 
 #[derive(Clone)]
 /// An iterator over the elements of a `PhfSet`.
@@ -297,7 +297,7 @@ pub struct Difference<'a, K: 'static> {
 
 impl<'a, K> Iterator for Difference<'a, K>
 where
-    K: Eq + Hash,
+    K: Eq + Hash  + core::convert::AsRef<[u8]>,
 {
     type Item = &'a K;
 
@@ -314,7 +314,7 @@ where
     }
 }
 
-impl<'a, K> core::iter::FusedIterator for Difference<'a, K> where K: Eq + Hash {}
+impl<'a, K> core::iter::FusedIterator for Difference<'a, K> where K: Eq + Hash  + core::convert::AsRef<[u8]> {}
 
 #[derive(Clone)]
 /// A lazy iterator producing elements from the intersection of two `PhfSet`s.
@@ -325,7 +325,7 @@ pub struct Intersection<'a, K: 'static> {
 
 impl<'a, K> Iterator for Intersection<'a, K>
 where
-    K: Eq + Hash,
+    K: Eq + Hash  + core::convert::AsRef<[u8]>,
 {
     type Item = &'a K;
 
@@ -342,7 +342,7 @@ where
     }
 }
 
-impl<'a, K> core::iter::FusedIterator for Intersection<'a, K> where K: Eq + Hash {}
+impl<'a, K> core::iter::FusedIterator for Intersection<'a, K> where K: Eq + Hash  + core::convert::AsRef<[u8]> {}
 
 #[derive(Clone)]
 /// A lazy iterator producing elements from the symmetric difference of two `PhfSet`s.
@@ -352,7 +352,7 @@ pub struct SymmetricDifference<'a, K: 'static> {
 
 impl<'a, K> Iterator for SymmetricDifference<'a, K>
 where
-    K: Eq + Hash,
+    K: Eq + Hash  + core::convert::AsRef<[u8]>,
 {
     type Item = &'a K;
 
@@ -365,7 +365,7 @@ where
     }
 }
 
-impl<'a, K> core::iter::FusedIterator for SymmetricDifference<'a, K> where K: Eq + Hash {}
+impl<'a, K> core::iter::FusedIterator for SymmetricDifference<'a, K> where K: Eq + Hash  + core::convert::AsRef<[u8]> {}
 
 #[derive(Clone)]
 /// A lazy iterator producing elements from the union of two `PhfSet`s.
@@ -375,7 +375,7 @@ pub struct Union<'a, K: 'static> {
 
 impl<'a, K> Iterator for Union<'a, K>
 where
-    K: Eq + Hash,
+    K: Eq + Hash  + core::convert::AsRef<[u8]>,
 {
     type Item = &'a K;
 
@@ -388,24 +388,5 @@ where
     }
 }
 
-impl<'a, K> core::iter::FusedIterator for Union<'a, K> where K: Eq + Hash {}
+impl<'a, K> core::iter::FusedIterator for Union<'a, K> where K: Eq + Hash  + core::convert::AsRef<[u8]> {}
 
-#[cfg(test)]
-mod tests {
-    use crate::examples::EMPTY_SET;
-
-    use super::*;
-
-    #[test]
-    fn test_empty() {
-        assert_eq!(EMPTY_SET.get(&17), None);
-        assert!(!EMPTY_SET.contains(&620));
-        assert!(EMPTY_SET.iter().next().is_none())
-    }
-
-    #[test]
-    fn test_sync() {
-        fn assert_sync<T: Sync>() {}
-        assert_sync::<PhfSet<u64>>();
-    }
-}

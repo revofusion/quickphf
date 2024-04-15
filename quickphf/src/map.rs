@@ -40,7 +40,7 @@ impl<K, V> PhfMap<K, V> {
     pub fn get_key_value<Q>(&self, key: &Q) -> Option<(&K, &V)>
     where
         K: Borrow<Q>,
-        Q: Hash + Eq + ?Sized,
+        Q: Hash + Eq + ?Sized  + core::convert::AsRef<[u8]>,
     {
         if self.is_empty() {
             return None;
@@ -67,7 +67,7 @@ impl<K, V> PhfMap<K, V> {
     pub fn get<Q>(&self, key: &Q) -> Option<&V>
     where
         K: Borrow<Q>,
-        Q: Hash + Eq + ?Sized,
+        Q: Hash + Eq + ?Sized + core::convert::AsRef<[u8]>,
     {
         self.get_key_value(key).map(|e| e.1)
     }
@@ -86,7 +86,7 @@ impl<K, V> PhfMap<K, V> {
     pub fn get_key<Q>(&self, key: &Q) -> Option<&K>
     where
         K: Borrow<Q>,
-        Q: Hash + Eq + ?Sized,
+        Q: Hash + Eq + ?Sized + core::convert::AsRef<[u8]>,
     {
         self.get_key_value(key).map(|e| e.0)
     }
@@ -103,7 +103,7 @@ impl<K, V> PhfMap<K, V> {
     pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
         K: Borrow<Q>,
-        Q: Hash + Eq + ?Sized,
+        Q: Hash + Eq + ?Sized + core::convert::AsRef<[u8]>,
     {
         self.get_key_value(key).is_some()
     }
@@ -215,7 +215,7 @@ impl<K, V> PhfMap<K, V> {
 
 impl<K, V> PartialEq for PhfMap<K, V>
 where
-    K: Eq + Hash,
+    K: Eq + Hash  + core::convert::AsRef<[u8]>,
     V: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
@@ -230,7 +230,7 @@ where
 
 impl<K, V> Eq for PhfMap<K, V>
 where
-    K: Eq + Hash,
+    K: Eq + Hash  + core::convert::AsRef<[u8]>,
     V: Eq,
 {
 }

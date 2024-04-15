@@ -141,7 +141,7 @@ pub use const_instantiable::DebugInstantiable;
 /// let holidays = [2, 1, 0, 0, 0, 1, 1, 0, 1, 1, 2, 1];
 /// let holidays_per_month = build_raw_map(&months, &holidays);
 /// ```
-pub fn build_raw_map<'a, K: Eq + Hash, V: ConstInstantiable>(
+pub fn build_raw_map<'a, K: Eq + Hash+ std::convert::AsRef<[u8]>, V: ConstInstantiable>(
     keys: &'a [K],
     values: &'a [V],
 ) -> CodeWriter<'a, K, V> {
@@ -165,7 +165,7 @@ pub fn build_raw_map<'a, K: Eq + Hash, V: ConstInstantiable>(
 /// let fourth_powers = roots.map(|x| x * x * x * x);
 /// let powers_to_roots = build_map(&fourth_powers, &roots);
 /// ```
-pub fn build_map<'a, K: Eq + Hash + ConstInstantiable, V: ConstInstantiable>(
+pub fn build_map<'a, K: Eq + Hash + ConstInstantiable+ std::convert::AsRef<[u8]>, V: ConstInstantiable>(
     keys: &'a [K],
     values: &'a [V],
 ) -> CodeWriter<'a, K, V> {
@@ -186,7 +186,7 @@ pub fn build_map<'a, K: Eq + Hash + ConstInstantiable, V: ConstInstantiable>(
 /// use quickphf_codegen::*;
 /// let digits_set = build_set(&[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
 /// ```
-pub fn build_set<K: Eq + Hash + ConstInstantiable>(keys: &[K]) -> CodeWriter<'_, K> {
+pub fn build_set<K: Eq + Hash + ConstInstantiable+ std::convert::AsRef<[u8]>>(keys: &[K]) -> CodeWriter<'_, K> {
     let phf = generate_phf(keys);
     CodeWriter {
         kind: Kind::Set,

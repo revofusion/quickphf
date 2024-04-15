@@ -1,10 +1,18 @@
 use core::hash::{Hash, Hasher};
+// use fnv_rs::{Fnv64, FnvHasher};
+// use fnv::FnvHasher;
+use fnv_rs::{Fnv64, FnvHasher, FnvHashResult};
+
 
 #[inline]
-pub fn hash_key<K: Hash + ?Sized>(key: &K, seed: u64) -> u64 {
-    let mut hasher = wyhash::WyHash::with_seed(seed);
-    key.hash(&mut hasher);
-    hasher.finish()
+pub fn hash_key<K: Hash + ?Sized + core::convert::AsRef<[u8]>>(key: &K, seed: u64) -> u64 {
+    let hash = Fnv64::hash(key);
+    let ret = u64::from_be_bytes(hash.as_bytes().try_into().expect("slice with incorrect length"));
+    return ret
+    // let mut hasher = wyhash::WyHash::with_seed(seed);
+    // hasher.write(key.as_ref());
+    // return hasher.finish();
+
 }
 
 #[inline]

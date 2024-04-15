@@ -5,8 +5,8 @@ use core::hash::Hash;
 use quickdiv::DivisorU64;
 use quickphf::shared::{get_bucket, get_index, hash_key, hash_pilot_value};
 
-const MAX_ALPHA: f64 = 0.99;
-const MIN_C: f64 = 1.5;
+const MAX_ALPHA: f64 = 0.9999;
+const MIN_C: f64 = 0.0;
 
 fn ilog2(n: u64) -> u32 {
     63 - n.leading_zeros()
@@ -26,7 +26,7 @@ pub struct Phf {
 /// # Panics
 ///
 /// Panics if `entries` contains a duplicate key.
-pub fn generate_phf<H: Eq + Hash>(entries: &[H]) -> Phf {
+pub fn generate_phf<H: Eq + Hash+ std::convert::AsRef<[u8]>>(entries: &[H]) -> Phf {
     if entries.is_empty() {
         return Phf {
             seed: 0,
@@ -58,7 +58,7 @@ pub fn generate_phf<H: Eq + Hash>(entries: &[H]) -> Phf {
         .expect("failed to resolve hash collision")
 }
 
-fn try_generate_phf<H: Eq + Hash>(
+fn try_generate_phf<H: Eq + Hash+ std::convert::AsRef<[u8]>>(
     entries: &[H],
     buckets_len: DivisorU64,
     codomain_len: DivisorU64,

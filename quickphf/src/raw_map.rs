@@ -11,13 +11,13 @@ use crate::shared::{get_bucket, get_index, hash_key, hash_pilot_value};
 /// An immutable hash table constructed at compile time with perfect hashing which does not store its keys.
 #[derive(Debug)]
 pub struct RawPhfMap<K, V: 'static> {
-    codomain_len: DivisorU64,
-    buckets: DivisorU64,
-    seed: u64,
+    pub codomain_len: DivisorU64,
+    pub buckets: DivisorU64,
+    pub seed: u64,
 
-    pilots_table: &'static [u16],
-    values: &'static [V],
-    free: &'static [u32],
+    pub pilots_table: &'static [u16],
+    pub values: &'static [V],
+    pub free: &'static [u32],
 
     key_marker: PhantomData<K>,
 }
@@ -71,7 +71,7 @@ impl<K, V> RawPhfMap<K, V> {
     pub fn get<Q>(&self, key: &Q) -> &V
     where
         K: Borrow<Q>,
-        Q: Hash + ?Sized,
+        Q: Hash + ?Sized + core::convert::AsRef<[u8]>,
     {
         let key_hash = hash_key(key, self.seed);
 
@@ -84,6 +84,20 @@ impl<K, V> RawPhfMap<K, V> {
         } else {
             &self.values[self.free[idx - self.len()] as usize]
         }
+    }
+
+    pub fn get_index<Q>(&self, key: &Q) -> usize
+    where
+        K: Borrow<Q>,
+        Q: Hash + ?Sized + core::convert::AsRef<[u8]>,
+    {
+        let key_hash = hash_key(key, self.seed);
+
+        let bucket = get_bucket(key_hash, self.buckets);
+        let pilot_hash = hash_pilot_value(self.pilots_table[bucket]);
+        let idx = get_index(key_hash, pilot_hash, self.codomain_len);
+
+        idx
     }
 
     /// Returns the number of elements in the map.

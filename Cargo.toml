@@ -2,7 +2,7 @@
 resolver = "2"
 exclude = ["benchmarks"]
 
-members = ["quickphf", "quickphf_codegen"]
+members = ["quickphf", "quickphf_codegen", "abc"]
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
